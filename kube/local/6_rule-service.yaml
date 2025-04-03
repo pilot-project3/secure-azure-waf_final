@@ -1,0 +1,54 @@
+##################################################################################################
+# log-service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: rule-service
+  labels:
+    app: rule-service
+    service: rule-service
+spec:
+  ports:
+  - port: 8083
+    name: http
+    targetPort: 8083
+  selector:
+    app: rule-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rule-service-sa
+  labels:
+    account: rule-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rule-service-deployment
+  labels:
+    app: rule-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rule-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: rule-service
+        version: v1
+    spec:
+      serviceAccountName: rule-service-sa
+      imagePullSecrets:
+        - name: acr-secret  # ACR 로그인 시 사용하는 secret
+      containers:
+      - name: rule-service
+        image: team03registry.azurecr.io/rule-service:latest  # ACR에서 가져오는 이미지
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8083
+---

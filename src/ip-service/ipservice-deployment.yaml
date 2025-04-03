@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"deployment.kubernetes.io/revision":"2"},"creationTimestamp":"2025-04-01T04:57:50Z","generation":2,"labels":{"app":"ipservice"},"name":"ipservice","namespace":"default","resourceVersion":"6151","uid":"c43c277a-5fa0-40f7-9f32-1c64403ec3ae"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"ipservice"}},"strategy":{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"ipservice"}},"spec":{"containers":[{"image":"team03registry.azurecr.io/ip-service:v2","imagePullPolicy":"IfNotPresent","name":"ip-service","resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File"}],"dnsPolicy":"ClusterFirst","imagePullSecrets":[{"name":"acr-secret"}],"restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30}}},"status":{"conditions":[{"lastTransitionTime":"2025-04-01T04:57:50Z","lastUpdateTime":"2025-04-01T04:57:50Z","message":"Deployment does not have minimum availability.","reason":"MinimumReplicasUnavailable","status":"False","type":"Available"},{"lastTransitionTime":"2025-04-01T04:57:50Z","lastUpdateTime":"2025-04-01T05:03:59Z","message":"ReplicaSet \"ipservice-7fd447c497\" is progressing.","reason":"ReplicaSetUpdated","status":"True","type":"Progressing"}],"observedGeneration":2,"replicas":2,"unavailableReplicas":2,"updatedReplicas":1}}
+  creationTimestamp: "2025-04-01T05:12:11Z"
+  generation: 2
+  labels:
+    app: ipservice
+  name: ipservice
+  namespace: default
+  resourceVersion: "11308"
+  uid: b59d36ff-6b0f-4c93-aa5d-e68760b6a423
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ipservice
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-04-01T14:17:59+09:00"
+      creationTimestamp: null
+      labels:
+        app: ipservice
+    spec:
+      containers:
+        - image: team03registry.azurecr.io/ip-service:v2
+          imagePullPolicy: IfNotPresent
+          name: ip-service
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          ports:
+            - containerPort: 8084
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: acr-secret
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+    - lastTransitionTime: "2025-04-01T05:23:49Z"
+      lastUpdateTime: "2025-04-01T05:23:49Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-04-01T05:12:11Z"
+      lastUpdateTime: "2025-04-01T05:23:49Z"
+      message: ReplicaSet "ipservice-79bb47895c" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+  observedGeneration: 2
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

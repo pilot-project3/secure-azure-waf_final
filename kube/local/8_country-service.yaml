@@ -1,0 +1,54 @@
+##################################################################################################
+# log-service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: country-service
+  labels:
+    app: country-service
+    service: country-service
+spec:
+  ports:
+  - port: 8082
+    name: http
+    targetPort: 8082
+  selector:
+    app: country-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: country-service-sa
+  labels:
+    account: country-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: country-service-deployment
+  labels:
+    app: country-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: country-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: country-service
+        version: v1
+    spec:
+      serviceAccountName: country-service-sa
+      imagePullSecrets:
+        - name: acr-secret  # ACR 로그인 시 사용하는 secret
+      containers:
+      - name: country-service
+        image: team03registry.azurecr.io/country-service:latest  # ACR에서 가져오는 이미지
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8082
+---

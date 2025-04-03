@@ -1,0 +1,54 @@
+##################################################################################################
+# log-service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: waf-service
+  labels:
+    app: waf-service
+    service: waf-service
+spec:
+  ports:
+  - port: 8081
+    name: http
+    targetPort: 8081
+  selector:
+    app: waf-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: waf-service-sa
+  labels:
+    account: waf-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waf-service-deployment
+  labels:
+    app: waf-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: waf-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: waf-service
+        version: v1
+    spec:
+      serviceAccountName: waf-service-sa
+      imagePullSecrets:
+        - name: acr-secret  # ACR 로그인 시 사용하는 secret
+      containers:
+      - name: waf-service
+        image: team03registry.azurecr.io/waf-service:latest  # ACR에서 가져오는 이미지
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+---

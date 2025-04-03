@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+*.sqlite3
+.DS_Store
+*.xlsx
+migrations/  # 만약 마이그레이션 파일을 제외하고 싶다면

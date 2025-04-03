@@ -1,0 +1,154 @@
+##################################################################################################
+# todo-backend
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  labels:
+    app: user-service
+    service: user-service
+spec:
+  ports:
+  - port: 8080
+    name: http
+    targetPort: 8080
+  selector:
+    app: user-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: user-service-sa
+  labels:
+    account: user-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service-deployment
+  labels:
+    app: user-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: user-service
+        version: v1
+    spec:
+      serviceAccountName: user-service-sa
+      imagePullSecrets:
+        - name: acr-secret 
+      containers:
+      - name: user-service
+        image: team03registry.azurecr.io/user-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+# ---
+# ##################################################################################################
+# # todo-frontend
+# ##################################################################################################
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: todo-frontend
+#   labels:
+#     app: todo-frontend
+#     service: todo-frontend
+# spec:
+#   ports:
+#   - port: 5175
+#     targetPort: 5175
+#   selector:
+#     app: todo-frontend
+# ---
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: todo-frontend-sa
+#   labels:
+#     account: todo-frontend
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: todo-frontend-deployment
+#   labels:
+#     app: todo-frontend
+#     version: v1
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: todo-frontend
+#       version: v1
+#   template:
+#     metadata:
+#       labels:
+#         app: todo-frontend
+#         version: v1
+#     spec:
+#       serviceAccountName: todo-frontend-sa
+#       initContainers:
+#       - name: wait-for-backend
+#         image: busybox
+#         command: ['sh', '-c', 'until nc -z todo-backend 8080; do echo waiting for backend...; sleep 2; done']
+#       containers:
+#       - name: todo-frontend
+#         image: aza1200/todo-frontend:latest
+#         imagePullPolicy: Always
+#         ports:
+#         - containerPort: 5175
+
+# ---
+# ##################################################################################################
+# # todo-postgres
+# ##################################################################################################
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: todo-postgres
+#   labels:
+#     app: todo-postgres
+#     service: todo-postgres
+# spec:
+#   ports:
+#   - port: 5432
+#     name: postgres
+#     targetPort: 5432
+#   selector:
+#     app: todo-postgres
+# ---
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: todo-postgres-sa
+#   labels:
+#     account: todo-postgres
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: todo-postgres-deployment
+#   labels:
+#     app: todo-postgres
+#     version: v1
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: todo-postgres
+#       version: v1
+#   template:
+#     metadata:
+#       labels:
+#         app: todo-postgres
+#         version: v1
+#     spec:

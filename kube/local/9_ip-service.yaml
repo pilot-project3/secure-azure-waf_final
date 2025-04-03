@@ -1,0 +1,54 @@
+##################################################################################################
+# ip-service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: ip-service
+  labels:
+    app: ip-service
+    service: ip-service
+spec:
+  ports:
+  - port: 8084
+    name: http
+    targetPort: 8084
+  selector:
+    app: ip-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ip-service-sa
+  labels:
+    account: ip-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ip-service-deployment
+  labels:
+    app: ip-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ip-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: ip-service
+        version: v1
+    spec:
+      serviceAccountName: ip-service-sa
+      imagePullSecrets:
+        - name: acr-secret  # ACR 로그인 시 사용하는 secret
+      containers:
+      - name: ip-service
+        image: team03registry.azurecr.io/ip-service:latest  # ACR에서 가져오는 이미지
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8084
+---

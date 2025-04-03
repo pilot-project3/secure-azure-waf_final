@@ -1,0 +1,54 @@
+##################################################################################################
+# log-service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: log-service
+  labels:
+    app: log-service
+    service: log-service
+spec:
+  ports:
+  - port: 5000
+    name: http
+    targetPort: 5000
+  selector:
+    app: log-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: log-service-sa
+  labels:
+    account: log-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-service-deployment
+  labels:
+    app: log-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: log-service
+        version: v1
+    spec:
+      serviceAccountName: log-service-sa
+      imagePullSecrets:
+        - name: acr-secret  # ACR 로그인 시 사용하는 secret
+      containers:
+      - name: log-service
+        image: team03registry.azurecr.io/log-service:latest  # ACR에서 가져오는 이미지
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+---
